@@ -1,56 +1,82 @@
 document.getElementById('queryForm').addEventListener('submit', function(e) {
     e.preventDefault();
-    
-    const formData = new FormData(e.target);
-    const params = new URLSearchParams();
+    fetchData('/api/students' + '?' + new URLSearchParams(new FormData(e.target)));
+});
 
-    for (const [key, value] of formData.entries()) {
-        if (value) {
-            params.append(key, value);
-        }
-    }
+document.getElementById('statsBtn').addEventListener('click', function() {
+    fetchData('/api/students/stats');
+});
 
-    fetch(`/api/students?${params.toString()}`)
-        .then(response => response.json())
+document.getElementById('performanceBtn').addEventListener('click', function() {
+    fetchData('/api/students/performance');
+});
+
+function fetchData(url) {
+    fetch(url)
+        .then(response => {
+            if (!response.ok) {
+                throw new Error('Network response was not ok');
+            }
+            return response.json();
+        })
         .then(data => {
             const resultsDiv = document.getElementById('results');
             resultsDiv.innerHTML = '<h2>Results:</h2>';
-            if (data.length === 0) {
-                resultsDiv.innerHTML += '<p>No results found.</p>';
+            if (Array.isArray(data)) {
+                displayTable(data);
             } else {
-                const table = document.createElement('table');
-                table.className = 'table table-striped';
-                
-                // Create table header
-                const thead = document.createElement('thead');
-                const headerRow = document.createElement('tr');
-                Object.keys(data[0]).forEach(key => {
-                    const th = document.createElement('th');
-                    th.textContent = key;
-                    headerRow.appendChild(th);
-                });
-                thead.appendChild(headerRow);
-                table.appendChild(thead);
-
-                // Create table body
-                const tbody = document.createElement('tbody');
-                data.forEach(student => {
-                    const row = document.createElement('tr');
-                    Object.values(student).forEach(value => {
-                        const td = document.createElement('td');
-                        td.textContent = value;
-                        row.appendChild(td);
-                    });
-                    tbody.appendChild(row);
-                });
-                table.appendChild(tbody);
-
-                resultsDiv.appendChild(table);
+                displayObject(data);
             }
         })
         .catch(error => {
             console.error('Error:', error);
             const resultsDiv = document.getElementById('results');
-            resultsDiv.innerHTML = '<p>An error occurred while fetching the data.</p>';
+            resultsDiv.innerHTML = '<p>An error occurred while fetching the data. Please check the console for more details.</p>';
         });
-});
+}
+
+function displayTable(data) {
+    if (data.length === 0) {
+        document.getElementById('results').innerHTML += '<p>No results found.</p>';
+        return;
+    }
+
+    const table = document.createElement('table');
+    table.className = 'table table-striped';
+    
+    const thead = document.createElement('thead');
+    const headerRow = document.createElement('tr');
+    Object.keys(data[0]).forEach(key => {
+        const th = document.createElement('th');
+        th.textContent = key;
+        headerRow.appendChild(th);
+    });
+    thead.appendChild(headerRow);
+    table.appendChild(thead);
+
+    const tbody = document.createElement('tbody');
+    data.forEach(item => {
+        const row = document.createElement('tr');
+        Object.values(item).forEach(value => {
+            const td = document.createElement('td');
+            td.textContent = value;
+            row.appendChild(td);
+        });
+        tbody.appendChild(row);
+    });
+    table.appendChild(tbody);
+
+    document.getElementById('results').appendChild(table);
+}
+
+function displayObject(data) {
+    const ul = document.createElement('ul');
+    ul.className = 'list-group';
+    for (const [key, value] of Object.entries(data)) {
+        const li = document.createElement('li');
+        li.className = 'list-group-item';
+        li.textContent = `${key}: ${value}`;
+        ul.appendChild(li);
+    }
+    document.getElementById('results').appendChild(ul);
+}

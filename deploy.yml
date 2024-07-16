@@ -1,0 +1,45 @@
+---
+- hosts: webservers
+  become: yes
+  tasks:
+    - name: Update apt cache
+      apt: update_cache=yes
+
+    - name: Install required packages
+      apt:
+        name:
+          - python3
+          - python3-pip
+          - nginx
+        state: present
+
+    - name: Copy project files
+      copy:
+        src: ./
+        dest: /var/www/student_api
+        owner: www-data
+        group: www-data
+
+    - name: Install Python dependencies
+      pip:
+        requirements: /var/www/student_api/requirements.txt
+
+    - name: Copy Nginx configuration
+      copy:
+        src: ./nginx.conf
+        dest: /etc/nginx/sites-available/student_api
+      notify: Restart Nginx
+
+    - name: Enable Nginx site
+      file:
+        src: /etc/nginx/sites-available/student_api
+        dest: /etc/nginx/sites-enabled/student_api
+        state: link
+      notify: Restart Nginx
+
+    - name: Start Flask application
+      shell: nohup python3 /var/www/student_api/backend/app.py &
+
+  handlers:
+    - name: Restart Nginx
+      service: name=nginx state=restarted

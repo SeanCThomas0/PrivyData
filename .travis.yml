@@ -10,6 +10,6 @@ script:
 
 deploy:
   provider: script
-  script: ansible-playbook ansible/playbook.yml
+  script: ansible-playbook deploy.yml
   on:
     branch: main

@@ -17,11 +17,11 @@
             <div class="row">
                 <div class="col-md-4 form-group">
                     <label for="Age">Minimum Age:</label>
-                    <input type="number" class="form-control" id="Age" min="0">
+                    <input type="number" class="form-control" id="Age" name="Age" min="0">
                 </div>
                 <div class="col-md-4 form-group">
                     <label for="Gender">Gender:</label>
-                    <select class="form-control" id="Gender">
+                    <select class="form-control" id="Gender" name="Gender">
                         <option value="">Any</option>
                         <option value="0">Female</option>
                         <option value="1">Male</option>
@@ -29,11 +29,43 @@
                 </div>
                 <div class="col-md-4 form-group">
                     <label for="GPA">Minimum GPA:</label>
-                    <input type="number" class="form-control" id="GPA" step="0.1" min="0" max="4">
+                    <input type="number" class="form-control" id="GPA" name="GPA" step="0.1" min="0" max="4">
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-md-4 form-group">
+                    <label for="Ethnicity">Ethnicity:</label>
+                    <select class="form-control" id="Ethnicity" name="Ethnicity">
+                        <option value="">Any</option>
+                        <option value="0">Caucasian</option>
+                        <option value="1">African American</option>
+                        <option value="2">Hispanic</option>
+                        <option value="3">Asian</option>
+                        <option value="4">Other</option>
+                    </select>
+                </div>
+                <div class="col-md-4 form-group">
+                    <label for="ParentalEducation">Parental Education:</label>
+                    <select class="form-control" id="ParentalEducation" name="ParentalEducation">
+                        <option value="">Any</option>
+                        <option value="1">High School</option>
+                        <option value="2">Some College</option>
+                        <option value="3">Bachelor's Degree</option>
+                        <option value="4">Master's Degree or higher</option>
+                    </select>
+                </div>
+                <div class="col-md-4 form-group">
+                    <label for="Name">Name (contains):</label>
+                    <input type="text" class="form-control" id="Name" name="Name">
+                    <input type="hidden" name="Name_comparison" value="contains">
                 </div>
             </div>
             <button type="submit" class="btn btn-primary">Submit Query</button>
         </form>
+        <div class="mt-4">
+            <button id="statsBtn" class="btn btn-secondary">Get Statistics</button>
+            <button id="performanceBtn" class="btn btn-info">Get Performance Breakdown</button>
+        </div>
 
         <div id="results" class="mt-4"></div>
     </div>
