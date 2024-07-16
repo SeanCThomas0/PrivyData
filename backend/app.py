@@ -1,15 +1,14 @@
-from flask import Flask, request, jsonify
-from database import init_db, db_session
-from models import Student
+from flask import Flask, send_from_directory
+from database import init_db
 from api.routes import api_bp
-from utils.privacy import add_noise
+import os
 
-app = Flask(__name__)
+app = Flask(__name__, static_folder='../frontend')
 app.register_blueprint(api_bp, url_prefix='/api')
 
-@app.teardown_appcontext
-def shutdown_session(exception=None):
-    db_session.remove()
+@app.route('/')
+def serve_frontend():
+    return send_from_directory(app.static_folder, 'index.html')
 
 if __name__ == '__main__':
     init_db()
