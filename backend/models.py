@@ -1,25 +1,25 @@
-from sqlalchemy import Column, Integer, String, Float
+from sqlalchemy import Column, Integer, Float, String
 from database import Base
 
 class Student(Base):
     __tablename__ = 'students'
-    id = Column(Integer, primary_key=True)
-    name = Column(String(100), nullable=False)
-    gender = Column(String(10))
-    gpa = Column(Float)
-    zip_code = Column(String(10))
-
-    def __init__(self, name, gender, gpa, zip_code):
-        self.name = name
-        self.gender = gender
-        self.gpa = gpa
-        self.zip_code = zip_code
+    StudentID = Column(Integer, primary_key=True)
+    Age = Column(Integer)
+    Gender = Column(Integer)
+    Ethnicity = Column(Integer)
+    ParentalEducation = Column(Integer)
+    StudyTimeWeekly = Column(Float)
+    Absences = Column(Integer)
+    Tutoring = Column(Integer)
+    ParentalSupport = Column(Integer)
+    Extracurricular = Column(Integer)
+    Sports = Column(Integer)
+    Music = Column(Integer)
+    Volunteering = Column(Integer)
+    GPA = Column(Float)
+    GradeClass = Column(Float)
+    Name = Column(String(100))
+    Zipcode = Column(String(10))
 
     def to_dict(self):
-        return {
-            'id': self.id,
-            'name': self.name,
-            'gender': self.gender,
-            'gpa': self.gpa,
-            'zip_code': self.zip_code
-        }
+        return {c.name: getattr(self, c.name) for c in self.__table__.columns}
