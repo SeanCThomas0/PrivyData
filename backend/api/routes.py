@@ -1,6 +1,7 @@
 from flask import Blueprint, request, jsonify
 from models import Student
 from database import db_session
+from utils.privacy import add_noise
 import numpy as np
 
 api_bp = Blueprint('api', __name__)
@@ -19,6 +20,10 @@ def get_students():
 
     students = query.all()
     result = [student.to_dict() for student in students]
+    sensitive_fields = ['GPA']
+    for student in result:
+        for field in sensitive_fields:
+            student['gpa'] = add_noise(student['gpa'])
     
     return jsonify(result)
 
