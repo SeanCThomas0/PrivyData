@@ -18,8 +18,6 @@ document.getElementById('statForm').addEventListener('submit', function(e) {
     const params = new URLSearchParams(formData);
     fetchData('/api/students/filtered_stats?' + params.toString());
 });
-
-
 function fetchData(url) {
     fetch(url)
         .then(response => {
