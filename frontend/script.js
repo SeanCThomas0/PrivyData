@@ -1,3 +1,4 @@
+// listeners that call functions when buttons are pressed
 document.getElementById('queryForm').addEventListener('submit', function(e) {
     e.preventDefault();
     fetchData('/api/students' + '?' + new URLSearchParams(new FormData(e.target)));
@@ -97,12 +98,17 @@ function displayStats(data) {
     const resultsDiv = document.getElementById('results');
     resultsDiv.innerHTML = '<h2>Statistics Results:</h2>';
     
+    if (data.count === 0) {
+        resultsDiv.innerHTML += '<p>No results found for the given criteria.</p>';
+        return;
+    }
+
     const ul = document.createElement('ul');
     ul.className = 'list-group';
     for (const [key, value] of Object.entries(data)) {
         const li = document.createElement('li');
         li.className = 'list-group-item';
-        li.textContent = `${key}: ${typeof value === 'number' ? value.toFixed(2) : value}`;
+        li.textContent = `${key}: ${value === null ? 'N/A' : (typeof value === 'number' ? value.toFixed(2) : value)}`;
         ul.appendChild(li);
     }
     resultsDiv.appendChild(ul);

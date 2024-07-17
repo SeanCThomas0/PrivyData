@@ -4,16 +4,28 @@ from sqlalchemy.ext.declarative import declarative_base
 import csv
 import os
 
-engine = create_engine('sqlite:///students.db')
+#establishes the connection to the db 'students.db
+engine = create_engine('sqlite:///students.db') 
+
+#create the scoped session that is bound to the engine.This makes queries
 db_session = scoped_session(sessionmaker(autocommit=False, autoflush=False, bind=engine))
 
+# base class for all tables to inherit from
 Base = declarative_base()
+
+# add a query property to our base class to easily perform queries
 Base.query = db_session.query_property()
 
+# initalizes the db
 def init_db():
+    #import our models (from models.py)
     import models
+
+    #create the tables based on those models
     Base.metadata.create_all(bind=engine)
 
+    #populates the db with values from modified_data.csv and makes
+    # student object with the specificed data
     if db_session.query(models.Student).count() == 0:
         csv_path = 'modified_data.csv'
         if not os.path.exists(csv_path):

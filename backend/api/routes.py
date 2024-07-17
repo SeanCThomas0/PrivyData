@@ -73,10 +73,14 @@ def get_filtered_stats():
     for column in Student.__table__.columns:
         value = request.args.get(column.name)
         if value:
-            if column.type.python_type in (int, float):
-                query = query.filter(getattr(Student, column.name) >= float(value))
-            else:
+            if column.name in ['Ethnicity', 'Gender', 'ParentalEducation']:
                 query = query.filter(getattr(Student, column.name) == value)
+            elif column.type.python_type in (int, float):
+                try:
+                    query = query.filter(getattr(Student, column.name) >= float(value))
+                except ValueError:
+                    # If conversion to float fails, ignore this filter
+                    pass
 
     stat_type = request.args.get('statType')
     
@@ -92,7 +96,14 @@ def get_filtered_stats():
         return jsonify({"error": "Invalid stat type"}), 400
 
     if not values:
-        return jsonify({"error": "No data found for the given criteria"}), 404
+        return jsonify({
+            "mean": None,
+            "median": None,
+            "min": None,
+            "max": None,
+            "std": None,
+            "count": 0
+        })
 
     stats = {
         'mean': float(np.mean(values)),
@@ -102,7 +113,5 @@ def get_filtered_stats():
         'std': float(np.std(values)),
         'count': len(values)
     }
-
-
 
     return jsonify(stats)
