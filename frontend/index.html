@@ -59,9 +59,63 @@
                     <input type="text" class="form-control" id="Name" name="Name">
                     <input type="hidden" name="Name_comparison" value="contains">
                 </div>
+
             </div>
             <button type="submit" class="btn btn-primary">Submit Query</button>
         </form>
+<form id="statForm" class="mt-4">
+  <h3>Statistic Query</h3>
+  <div class="row">
+    <div class="col-md-4 form-group">
+      <label for="statType">Statistic:</label>
+      <select id="statType" name="statType" class="form-control">
+        <option value="GPA">GPA</option>
+        <option value="Age">Age</option>
+        <option value="Absences">Absences</option>
+      </select>
+    </div>
+    <div class="col-md-4 form-group">
+      <label for="Age">Minimum Age:</label>
+      <input type="number" id="Age" name="Age" class="form-control">
+    </div>
+    <div class="col-md-4 form-group">
+      <label for="Gender">Gender:</label>
+      <select id="Gender" name="Gender" class="form-control">
+        <option value="">Any</option>
+        <option value="Female">Female</option>
+        <option value="Male">Male</option>
+      </select>
+    </div>
+  </div>
+  <div class="row">
+    <div class="col-md-4 form-group">
+      <label for="Ethnicity">Ethnicity:</label>
+      <select id="Ethnicity" name="Ethnicity" class="form-control">
+        <option value="">Any</option>
+        <option value="Caucasian">Caucasian</option>
+        <option value="African American">African American</option>
+        <option value="Hispanic">Hispanic</option>
+        <option value="Asian">Asian</option>
+        <option value="Other">Other</option>
+      </select>
+    </div>
+    <div class="col-md-4 form-group">
+      <label for="ParentalEducation">Parental Education:</label>
+      <select id="ParentalEducation" name="ParentalEducation" class="form-control">
+        <option value="">Any</option>
+        <option value="High School">High School</option>
+        <option value="Some College">Some College</option>
+        <option value="Bachelor's Degree">Bachelor's Degree</option>
+        <option value="Master's Degree or higher">Master's Degree or higher</option>
+      </select>
+    </div>
+    <div class="col-md-4 form-group">
+      <label for="GPA">Minimum GPA:</label>
+      <input type="number" step="0.1" id="GPA" name="GPA" class="form-control">
+    </div>
+  </div>
+  <button type="submit" class="btn btn-primary">Get Statistics</button>
+</form>
         <div class="mt-4">
             <button id="statsBtn" class="btn btn-secondary">Get Statistics</button>
             <button id="performanceBtn" class="btn btn-info">Get Performance Breakdown</button>

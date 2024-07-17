@@ -23,7 +23,7 @@ def get_students():
     sensitive_fields = ['GPA']
     for student in result:
         for field in sensitive_fields:
-            student['gpa'] = add_noise(student['gpa'])
+            student['GPA'] = add_noise(student['GPA'])
     
     return jsonify(result)
 
@@ -63,3 +63,46 @@ def add_student():
     db_session.add(new_student)
     db_session.commit()
     return jsonify(new_student.to_dict()), 201
+
+
+@api_bp.route('/students/filtered_stats', methods=['GET'])
+def get_filtered_stats():
+    query = Student.query
+
+    # Apply filters based on query parameters
+    for column in Student.__table__.columns:
+        value = request.args.get(column.name)
+        if value:
+            if column.type.python_type in (int, float):
+                query = query.filter(getattr(Student, column.name) >= float(value))
+            else:
+                query = query.filter(getattr(Student, column.name) == value)
+
+    stat_type = request.args.get('statType')
+    
+    students = query.all()
+    
+    if stat_type == 'GPA':
+        values = [student.GPA for student in students]
+    elif stat_type == 'Age':
+        values = [student.Age for student in students]
+    elif stat_type == 'Absences':
+        values = [student.Absences for student in students]
+    else:
+        return jsonify({"error": "Invalid stat type"}), 400
+
+    if not values:
+        return jsonify({"error": "No data found for the given criteria"}), 404
+
+    stats = {
+        'mean': float(np.mean(values)),
+        'median': float(np.median(values)),
+        'min': float(np.min(values)),
+        'max': float(np.max(values)),
+        'std': float(np.std(values)),
+        'count': len(values)
+    }
+
+
+
+    return jsonify(stats)
