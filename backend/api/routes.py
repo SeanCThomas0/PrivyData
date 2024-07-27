@@ -3,8 +3,11 @@ from models import Student
 from database import db_session
 from utils.privacy import add_noise
 import numpy as np
+import opendp.prelude as dp
 
 api_bp = Blueprint('api', __name__)
+dp.enable_features('contrib')
+
 
 @api_bp.route('/students', methods=['GET'])
 def get_students():
@@ -21,10 +24,11 @@ def get_students():
     students = query.all()
     result = [student.to_dict() for student in students]
     sensitive_fields = ['GPA']
-    for student in result:
-        for field in sensitive_fields:
-            student['GPA'] = add_noise(student['GPA'])
-    
+    #    for student in result:
+    #   for field in sensitive_fields:
+    #       student['GPA'] = add_noise(student['GPA'])
+    #
+    #
     return jsonify(result)
 
 @api_bp.route('/students/stats', methods=['GET'])
