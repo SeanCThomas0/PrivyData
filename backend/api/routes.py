@@ -79,7 +79,7 @@ def get_filtered_stats():
                 try:
                     query = query.filter(getattr(Student, column.name) >= float(value))
                 except ValueError:
-                    # If conversion to float fails, ignore this filter
+                    # If conversion to float fails, ignore this filter.
                     pass
 
     stat_type = request.args.get('statType')
