@@ -112,3 +112,15 @@ function displayStats(data) {
     }
     resultsDiv.appendChild(ul);
 }
+function toggleDarkMode() {
+    var body = document.body;
+    var resultsContainer = document.getElementById('results');
+    var button = document.getElementById("darkModeToggle");
+    
+    body.classList.toggle("dark-mode");
+    if (resultsContainer) {
+        resultsContainer.classList.toggle("dark-mode");
+    }
+    
+    button.textContent = body.classList.contains("dark-mode") ? "Toggle Light Mode" : "Toggle Dark Mode";
+}

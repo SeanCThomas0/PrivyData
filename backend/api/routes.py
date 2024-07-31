@@ -3,16 +3,16 @@ from models import Student
 from database import db_session
 from utils.privacy import add_noise
 import numpy as np
-import opendp.prelude as dp
+#import opendp.prelude as dp
 
 api_bp = Blueprint('api', __name__)
-dp.enable_features('contrib')
+#dp.enable_features('contrib')
 
-privacy_unit = dp.unit_of(contributions=1)
-input_metric, d_in = privacy_unit
+#privacy_unit = dp.unit_of(contributions=1)
+#input_metric, d_in = privacy_unit
 
-privacy_loss = dp.loss_of(epsilon=1.)
-privacy_measure, d_out = privacy_loss
+#privacy_loss = dp.loss_of(epsilon=1.)
+#privacy_measure, d_out = privacy_loss
 
 @api_bp.route('/students', methods=['GET'])
 def get_students():

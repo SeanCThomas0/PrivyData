@@ -1,0 +1,209 @@
+/* Base styles */
+body {
+    font-family: 'Arial', sans-serif;
+    line-height: 1.6;
+    transition: background-color 0.3s, color 0.3s;
+    margin: 0;
+    padding: 20px;
+}
+
+.container {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 30px;
+    border-radius: 8px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    transition: background-color 0.3s, box-shadow 0.3s;
+}
+
+h1, h2, h3 {
+    transition: color 0.3s;
+}
+
+.form-group {
+    margin-bottom: 20px;
+}
+
+input[type="text"],
+input[type="number"],
+select {
+    width: 100%;
+    padding: 10px;
+    border-radius: 4px;
+    font-size: 16px;
+    transition: background-color 0.3s, color 0.3s, border-color 0.3s;
+}
+
+button {
+    border: none;
+    padding: 10px 20px;
+    cursor: pointer;
+    border-radius: 4px;
+    font-size: 16px;
+    transition: background-color 0.3s, color 0.3s;
+}
+
+.table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 20px;
+}
+
+.table th,
+.table td {
+    padding: 12px;
+    text-align: left;
+    transition: background-color 0.3s, color 0.3s, border-color 0.3s;
+
+}
+
+#results {
+    margin-top: 30px;
+    padding: 20px;
+    border-radius: 4px;
+    transition: background-color 0.3s, box-shadow 0.3s;
+    max-height: 500px;
+    overflow-y: auto;
+}
+
+/* Light mode (default) */
+body {
+    background-color: #f4f4f4;
+    color: #333;
+}
+
+.container {
+    background-color: #ffffff;
+}
+
+h1, h2, h3 {
+    color: #2c3e50;
+}
+
+input[type="text"],
+input[type="number"],
+select {
+    border: 1px solid #ddd;
+    background-color: #ffffff;
+    color: #333;
+}
+
+button {
+    background-color: #3498db;
+    color: #ffffff;
+}
+
+button:hover {
+    background-color: #2980b9;
+}
+
+.table th {
+    background-color: #f2f2f2;
+    color: #333;
+}
+
+.table td {
+    border-bottom: 1px solid #ddd;
+}
+
+.table tr {
+    background-color: #ffffff;
+}
+
+#results {
+    background-color: #ffffff;
+    box-shadow: 0 0 5px rgba(0, 0, 0, 0.1);
+    color: #333;
+}
+
+/* Dark mode */
+body.dark-mode {
+    background-color: #1a1a1a;
+    color: #f4f4f4;
+}
+
+.dark-mode .container {
+    background-color: #2c2c2c;
+    box-shadow: 0 0 10px rgba(255, 255, 255, 0.1);
+}
+
+.dark-mode h1, .dark-mode h2, .dark-mode h3 {
+    color: #ecf0f1;
+}
+
+.dark-mode input[type="text"],
+.dark-mode input[type="number"],
+.dark-mode select {
+    border: 1px solid #444;
+    background-color: #333;
+    color: #ffffff;
+}
+
+.dark-mode button {
+    background-color: #2980b9;
+    color: #ffffff;
+}
+
+.dark-mode button:hover {
+    background-color: #3498db;
+}
+
+.dark-mode .table th {
+    background-color: #444;
+    color: #f4f4f4;
+}
+
+.dark-mode .table td {
+    border-bottom: 1px solid #444;
+}
+
+.dark-mode .table tr {
+    background-color: #2c2c2c;
+    color: #f4f4f4;
+    --bs-table-striped-bg: #424242; 
+    --bs-table-striped-color: #f4f4f4;; 
+}
+
+.dark-mode #results {
+    background-color: #2c2c2c;
+    box-shadow: 0 0 5px rgba(255, 255, 255, 0.1);
+    color: #f4f4f4;
+}
+
+/* Scrollbar styles */
+#results::-webkit-scrollbar {
+    width: 12px;
+}
+
+#results::-webkit-scrollbar-track {
+    background: #f1f1f1;
+}
+
+#results::-webkit-scrollbar-thumb {
+    background-color: #888;
+    border-radius: 6px;
+    border: 3px solid #f1f1f1;
+}
+
+.dark-mode #results::-webkit-scrollbar-track {
+    background: #2c2c2c;
+}
+
+.dark-mode #results::-webkit-scrollbar-thumb {
+    background-color: #555;
+    border: 3px solid #2c2c2c;
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+    .container {
+        padding: 15px;
+    }
+    
+    input[type="text"],
+    input[type="number"],
+    select,
+    button {
+        font-size: 14px;
+    }
+}

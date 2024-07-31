@@ -3,6 +3,24 @@ from flask import Flask, send_from_directory, jsonify
 from database import init_db
 from api.routes import api_bp
 import os
+import sys
+
+
+
+#os.environ['OPENDP_LIB_DIR']=r'C:\student_api_project\venv\Lib\site-packages\opendp\lib'
+
+# opendp_lib_path = r"C:\student_api_project\venv\Lib\site-packages"
+# opendp_lib_path2 = r"C:\student_api_project\venv\Lib\site-packages\opendp"
+# opendp_lib_path3 = r"C:\student_api_project\venv\Lib\site-packages\opendp\lib"
+# sys.path.append(opendp_lib_path)
+# sys.path.append(opendp_lib_path2)
+#sys.path.append(opendp_lib_path3)
+# print(sys.path)
+import opendp.prelude as dp
+dp.enable_features('contrib')
+laplace_mechanism = dp.space_of(float) >> dp.m.then_laplace(scale=1.)
+dp_value = laplace_mechanism(123.0)
+print(dp_value)
 
 app = Flask(__name__, static_folder='../frontend', static_url_path='')
 app.register_blueprint(api_bp, url_prefix='/api')
