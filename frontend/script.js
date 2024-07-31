@@ -32,7 +32,7 @@ function fetchData(url) {
                 displayStats(data);
             } else {
                 const resultsDiv = document.getElementById('results');
-                resultsDiv.innerHTML = '<h2>Results:</h2>';
+                resultsDiv.innerHTML = '<h2></h2>';
                 if (Array.isArray(data)) {
                     displayTable(data);
                 } else {
