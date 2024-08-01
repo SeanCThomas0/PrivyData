@@ -3,16 +3,17 @@ from models import Student
 from database import db_session
 from utils.privacy import add_noise
 import numpy as np
-#import opendp.prelude as dp
+
 
 api_bp = Blueprint('api', __name__)
-#dp.enable_features('contrib')
 
-#privacy_unit = dp.unit_of(contributions=1)
-#input_metric, d_in = privacy_unit
+import opendp.prelude as dp
+dp.enable_features('contrib')
+laplace_mechanism = dp.space_of(float) >> dp.m.then_laplace(scale=1.)
+dp_value = laplace_mechanism(123.0)
+print(dp_value)
 
-#privacy_loss = dp.loss_of(epsilon=1.)
-#privacy_measure, d_out = privacy_loss
+
 
 @api_bp.route('/students', methods=['GET'])
 def get_students():
