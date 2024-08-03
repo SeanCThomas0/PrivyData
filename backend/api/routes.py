@@ -9,8 +9,26 @@ api_bp = Blueprint('api', __name__)
 
 import opendp.prelude as dp
 dp.enable_features('contrib')
-laplace_mechanism = dp.space_of(float) >> dp.m.then_laplace(scale=1.)
-dp_value = laplace_mechanism(123.0)
+#laplace_mechanism = dp.space_of(float) >> dp.m.then_laplace(scale=1.)
+#dp_value = laplace_mechanism(123.0)
+
+col_names =["StudentID", "Age", "Gender", "Ethnicity", "ParentalEducation",
+          "StudyTimeWeekly", "Absensces", "Tutoring", "ParentalSupport", "Extracurricular", "Sports" ,"Music", "Volunteering", "GPA", "GradeClass", "Name","Zipcode"  ]
+
+max_influence = 1
+age_bounds = (14,18) # students in this disrtict must be age range 14-18
+gender_bounds = (0,1) # 0 = female, 1 = male
+ethnicity_bounds = (0,4) # see index.html for mapping
+absensce_bounds = (0,35) 
+class_bounds = (1,4) # 1-4 for freshman,sophomore,junior,senior
+gpa_bounds = (0,4) # 4.0 grading scale
+zipcode_bounds = (46145, 46181) # zipcodes for school district
+
+
+
+
+
+
 
 
 
