@@ -5,18 +5,6 @@ from api.routes import api_bp
 import os
 import sys
 
-
-
-#os.environ['OPENDP_LIB_DIR']=r'C:\student_api_project\venv\Lib\site-packages\opendp\lib'
-
-# opendp_lib_path = r"C:\student_api_project\venv\Lib\site-packages"
-# opendp_lib_path2 = r"C:\student_api_project\venv\Lib\site-packages\opendp"
-# opendp_lib_path3 = r"C:\student_api_project\venv\Lib\site-packages\opendp\lib"
-# sys.path.append(opendp_lib_path)
-# sys.path.append(opendp_lib_path2)
-#sys.path.append(opendp_lib_path3)
-# print(sys.path)
-
 app = Flask(__name__, static_folder='../frontend', static_url_path='')
 app.register_blueprint(api_bp, url_prefix='/api')
 
