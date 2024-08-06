@@ -4,13 +4,6 @@ document.getElementById('queryForm').addEventListener('submit', function(e) {
     fetchData('/api/students' + '?' + new URLSearchParams(new FormData(e.target)));
 });
 
-document.getElementById('statsBtn').addEventListener('click', function() {
-    fetchData('/api/students/stats');
-});
-
-document.getElementById('performanceBtn').addEventListener('click', function() {
-    fetchData('/api/students/performance');
-});
 
 document.getElementById('statForm').addEventListener('submit', function(e) {
     e.preventDefault();
