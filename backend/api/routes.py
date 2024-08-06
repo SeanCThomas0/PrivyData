@@ -1,40 +1,72 @@
 from flask import Blueprint, request, jsonify
 from models import Student
 from database import db_session
-from utils.privacy import add_noise
 import numpy as np
-
+import pandas as pd
+import opendp.prelude as dp
 
 api_bp = Blueprint('api', __name__)
 
-import opendp.prelude as dp
+# Enable necessary features in OpenDP
 dp.enable_features('contrib')
-#laplace_mechanism = dp.space_of(float) >> dp.m.then_laplace(scale=1.)
-#dp_value = laplace_mechanism(123.0)
 
-col_names =["StudentID", "Age", "Gender", "Ethnicity", "ParentalEducation",
-          "StudyTimeWeekly", "Absensces", "Tutoring", "ParentalSupport", "Extracurricular", "Sports" ,"Music", "Volunteering", "GPA", "GradeClass", "Name","Zipcode"  ]
+col_names = ["StudentID", "Age", "Gender", "Ethnicity", "ParentalEducation",
+             "StudyTimeWeekly", "Absences", "Tutoring", "ParentalSupport", "Extracurricular", 
+             "Sports", "Music", "Volunteering", "GPA", "GradeClass", "Name", "Zipcode"]
 
-max_influence = 1
-age_bounds = (14,18) # students in this disrtict must be age range 14-18
-gender_bounds = (0,1) # 0 = female, 1 = male
-ethnicity_bounds = (0,4) # see index.html for mapping
-absensce_bounds = (0,35) 
-class_bounds = (1,4) # 1-4 for freshman,sophomore,junior,senior
-gpa_bounds = (0,4) # 4.0 grading scale
-zipcode_bounds = (46145, 46181) # zipcodes for school district
+# Define bounds for clamping
+age_bounds = (14.0, 18.0)  # explicitly casting to float
+gpa_bounds = (0.0, 4.0)    # explicitly casting to float
+absences_bounds = (0.0, 35.0)  # explicitly casting to float
+
+# Define privacy parameters
+privacy_unit = dp.unit_of(contributions=1)
+privacy_loss = dp.loss_of(epsilon=0.25)
+
+# Read the local CSV file without getting the column names
+data = pd.read_csv('modified_data.csv', header=None)
+
+# Convert the DataFrame to a CSV string without the header
+data_csv = data.to_csv(index=False, header=False)
+
+# Create the DP context
+context = dp.Context.compositor(
+    data=data_csv,
+    privacy_unit=privacy_unit,
+    privacy_loss=privacy_loss,
+    split_evenly_over=6
+)
+
+# Define function to create mean query with DP
+def create_mean_query(context, col_names, column_name, min_value, max_value, dp_count):
+    return (
+        context.query()
+        .split_dataframe(",", col_names=col_names)
+        .select_column(column_name, str)
+        .cast_default(float)
+        .clamp((float(min_value), float(max_value)))  # ensure bounds are float
+        .resize(size=dp_count, constant=min_value)
+        .mean()
+        .laplace()
+    )
+
+# Define function to create count query with DP
+def create_count_query(context, col_names, column_name):
+    return (
+        context.query()
+        .split_dataframe(",", col_names=col_names)
+        .select_column(column_name, str)
+        .count()
+        .laplace()
+    )
 
 
 
-
-
-
-
-
-
+# Other routes can remain as they are
 @api_bp.route('/students', methods=['GET'])
 def get_students():
     query = Student.query
+
 
     for column in Student.__table__.columns:
         value = request.args.get(column.name)
@@ -46,31 +78,8 @@ def get_students():
 
     students = query.all()
     result = [student.to_dict() for student in students]
-    sensitive_fields = ['GPA']
-    #    for student in result:
-    #   for field in sensitive_fields:
-    #       student['GPA'] = add_noise(student['GPA'])
-    #
-    #
+
     return jsonify(result)
-
-@api_bp.route('/students/stats', methods=['GET'])
-def get_student_stats():
-    students = Student.query.all()
-    gpas = [student.GPA for student in students]
-    ages = [student.Age for student in students]
-
-    stats = {
-        'gpa_mean': np.mean(gpas),
-        'gpa_median': np.median(gpas),
-        'gpa_std': np.std(gpas),
-        'age_mean': np.mean(ages),
-        'age_median': np.median(ages),
-        'age_std': np.std(ages),
-        'total_students': len(students)
-    }
-
-    return jsonify(stats)
 
 @api_bp.route('/students/performance', methods=['GET'])
 def get_performance_breakdown():
@@ -92,8 +101,44 @@ def add_student():
     return jsonify(new_student.to_dict()), 201
 
 
-@api_bp.route('/students/filtered_stats', methods=['GET'])
-def get_filtered_stats():
+@api_bp.route('/students/stats', methods=['GET'])
+def get_student_dp_stats():
+    students = Student.query.all()
+    dp_count = len(students)
+    print('dp')
+
+    # DP queries
+    age_mean_query = create_mean_query(context, col_names, "Age", age_bounds[0], age_bounds[1], dp_count)
+    gpa_mean_query = create_mean_query(context, col_names, "GPA", gpa_bounds[0], gpa_bounds[1], dp_count)
+    absences_mean_query = create_mean_query(context, col_names, "Absences", absences_bounds[0], absences_bounds[1], dp_count)
+    print('dp1')
+
+    age_mean = age_mean_query.release()
+    gpa_mean = gpa_mean_query.release()
+    absences_mean = absences_mean_query.release()
+    print('dp2')
+
+    age_count_query = create_count_query(context, col_names, "Age")
+    gpa_count_query = create_count_query(context, col_names, "GPA")
+    absences_count_query = create_count_query(context, col_names, "Absences")
+    print('dp3')
+    age_count = age_count_query.release()
+    gpa_count = gpa_count_query.release()
+    absences_count = absences_count_query.release()
+
+    stats = {
+        'age_mean': age_mean,
+        'gpa_mean': gpa_mean,
+        'absences_mean': absences_mean,
+        'age_count': age_count,
+        'gpa_count': gpa_count,
+        'absences_count': absences_count,
+    }
+
+    return jsonify(stats)
+
+@api_bp.route('/students/stat', methods=['GET'])
+def get_student_normal_stat():
     query = Student.query
 
     # Apply filters based on query parameters

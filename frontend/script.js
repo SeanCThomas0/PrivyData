@@ -1,17 +1,16 @@
-// listeners that call functions when buttons are pressed
 document.getElementById('queryForm').addEventListener('submit', function(e) {
     e.preventDefault();
-    fetchData('/api/students' + '?' + new URLSearchParams(new FormData(e.target)));
+    fetchData('/api/students?' + new URLSearchParams(new FormData(e.target)));
 });
-
 
 document.getElementById('statForm').addEventListener('submit', function(e) {
     e.preventDefault();
     const formData = new FormData(e.target);
     const params = new URLSearchParams(formData);
-    fetchData('/api/students/filtered_stats?' + params.toString());
-    
+    fetchData('/api/students/stat?' + params.toString());
+    fetchData('/api/students/stats?' + params.toString());
 });
+
 function fetchData(url) {
     fetch(url)
         .then(response => {
@@ -21,11 +20,13 @@ function fetchData(url) {
             return response.json();
         })
         .then(data => {
-            if (url.includes('/filtered_stats')) {
-                displayStats(data);
+            if (url.includes('/stat')) {
+                displayStats(data, false);
+            } else if (url.includes('/stats')) {
+                displayStats(data, true);
             } else {
                 const resultsDiv = document.getElementById('results');
-                resultsDiv.innerHTML = '<h2></h2>';
+                resultsDiv.innerHTML = '<h2>Query Results:</h2>';
                 if (Array.isArray(data)) {
                     displayTable(data);
                 } else {
@@ -36,7 +37,7 @@ function fetchData(url) {
         .catch(error => {
             console.error('Error:', error);
             const resultsDiv = document.getElementById('results');
-            resultsDiv.innerHTML = '<p>An error occurred while fetching the data. Please check the console for more details.</p>';
+            resultsDiv.innerHTML += '<p>An error occurred while fetching the data. Please check the console for more details.</p>';
         });
 }
 
@@ -86,25 +87,34 @@ function displayObject(data) {
     document.getElementById('results').appendChild(ul);
 }
 
-function displayStats(data) {
+function displayStats(data, isDP) {
     const resultsDiv = document.getElementById('results');
-    resultsDiv.innerHTML = '<h2>Statistics Results:</h2>';
+    const title = isDP ? 'Differentially Private Statistics:' : 'Normal Statistics:';
+    
+    if (!resultsDiv.innerHTML.includes('Statistics Results:')) {
+        resultsDiv.innerHTML = '<h2>Statistics Results:</h2>';
+    }
+    
+    const statDiv = document.createElement('div');
+    statDiv.innerHTML = `<h3>${title}</h3>`;
     
     if (data.count === 0) {
-        resultsDiv.innerHTML += '<p>No results found for the given criteria.</p>';
-        return;
+        statDiv.innerHTML += '<p>No results found for the given criteria.</p>';
+    } else {
+        const ul = document.createElement('ul');
+        ul.className = 'list-group';
+        for (const [key, value] of Object.entries(data)) {
+            const li = document.createElement('li');
+            li.className = 'list-group-item';
+            li.textContent = `${key}: ${value === null ? 'N/A' : (typeof value === 'number' ? value.toFixed(2) : value)}`;
+            ul.appendChild(li);
+        }
+        statDiv.appendChild(ul);
     }
-
-    const ul = document.createElement('ul');
-    ul.className = 'list-group';
-    for (const [key, value] of Object.entries(data)) {
-        const li = document.createElement('li');
-        li.className = 'list-group-item';
-        li.textContent = `${key}: ${value === null ? 'N/A' : (typeof value === 'number' ? value.toFixed(2) : value)}`;
-        ul.appendChild(li);
-    }
-    resultsDiv.appendChild(ul);
+    
+    resultsDiv.appendChild(statDiv);
 }
+
 function toggleDarkMode() {
     var body = document.body;
     var resultsContainer = document.getElementById('results');
