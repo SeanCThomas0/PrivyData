@@ -1,4 +1,4 @@
-# Student Data Privacy Application
+# PrivyData
 
 ## Overview
 
